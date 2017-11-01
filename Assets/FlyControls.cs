@@ -12,9 +12,12 @@ public class FlyControls : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-		float vertical = CrossPlatformInputManager.GetAxis("Vertical");
-		Debug.Log(horizontal);
-		Debug.Log(vertical);
+		float x = CrossPlatformInputManager.GetAxis("Horizontal");
+		float y = CrossPlatformInputManager.GetAxis("Vertical");
+		float rx = CrossPlatformInputManager.GetAxis("Mouse X");
+		float ry = CrossPlatformInputManager.GetAxis("Mouse Y");
+		Debug.Log(rx);
+		transform.Translate(x, y, 0);
+		transform.Rotate(rx, ry, 0);
 	}
 }
