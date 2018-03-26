@@ -59,9 +59,20 @@ public class PlayerMoveController : MonoBehaviour {
 
 		if(continuousRightController)
 		{
-			transform.localEulerAngles = new Vector3(transform.localEulerAngles.x - rightController.GetTouchPosition.y * Time.deltaTime * speedContinuousLook,
+			var lookVector = new Vector3(transform.localEulerAngles.x - rightController.GetTouchPosition.y * Time.deltaTime * speedContinuousLook,
 				transform.localEulerAngles.y + rightController.GetTouchPosition.x * Time.deltaTime * speedContinuousLook,
 				0f);
+			float x = lookVector.x;
+			x = (x > 180) ? x - 360 : x;
+			if (x > 80)
+			{
+				lookVector.x = 80;
+			}
+			else if (x < -80)
+			{
+				lookVector.x = -80;
+			}
+			transform.localEulerAngles = lookVector;
 		}
 	}
 
