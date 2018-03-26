@@ -224,6 +224,25 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2637716e9560ba540b86ad745b78cc25, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &12807463 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100000, guid: 2637716e9560ba540b86ad745b78cc25, type: 3}
+  m_PrefabInternal: {fileID: 12807462}
+--- !u!54 &12807464
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 12807463}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!4 &33262154 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400000, guid: 2637716e9560ba540b86ad745b78cc25, type: 3}
@@ -876,6 +895,25 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c6c3ccee0c9f61842aae6a130c1dd1eb, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &355274079 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100000, guid: c6c3ccee0c9f61842aae6a130c1dd1eb, type: 3}
+  m_PrefabInternal: {fileID: 355274078}
+--- !u!54 &355274080
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 355274079}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &374611619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,6 +1130,25 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 390f3337c85488f4f836d6749bbcd32a, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &510315630 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100000, guid: 390f3337c85488f4f836d6749bbcd32a, type: 3}
+  m_PrefabInternal: {fileID: 510315629}
+--- !u!54 &510315631
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 510315630}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &548040542
 Prefab:
   m_ObjectHideFlags: 0
