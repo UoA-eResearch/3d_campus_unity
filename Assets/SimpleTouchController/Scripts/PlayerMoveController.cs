@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -8,6 +9,7 @@ public class PlayerMoveController : MonoBehaviour {
 	// PUBLIC
 	public SimpleTouchController leftController;
 	public SimpleTouchController rightController;
+	public ButtonStatus boost;
 	public float speedMovements = 5f;
 	public float speedContinuousLook = 100f;
 	public float speedProgressiveLook = 3000f;
@@ -54,7 +56,8 @@ public class PlayerMoveController : MonoBehaviour {
 	void Update()
 	{
 		// move
-		_rigidbody.AddForce((transform.forward * leftController.GetTouchPosition.y * Time.deltaTime * speedMovements) +
+		var speedThisFrame = boost.isHeld ? speedMovements * 5 : speedMovements;
+		_rigidbody.AddForce((transform.forward * leftController.GetTouchPosition.y * Time.deltaTime * speedThisFrame) +
 			(transform.right * leftController.GetTouchPosition.x * Time.deltaTime * speedMovements) );
 
 		if(continuousRightController)
