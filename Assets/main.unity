@@ -2164,6 +2164,8 @@ MonoBehaviour:
   touchMoveSpeed: 1
   mouseLookSpeed: 3.5
   mouseMoveSpeed: 10000
+  clickTime: 0.2
+  teleportTime: 2
 --- !u!135 &924913587
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3420,7 +3422,7 @@ GameObject:
   - component: {fileID: 1356905679}
   m_Layer: 0
   m_Name: CeR photosphere
-  m_TagString: Untagged
+  m_TagString: photosphere
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3510,9 +3512,9 @@ SphereCollider:
   m_GameObject: {fileID: 1356905673}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1356905678
 MeshFilter:

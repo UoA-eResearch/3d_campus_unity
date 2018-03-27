@@ -7,11 +7,17 @@ public class Controls : MonoBehaviour {
 	public float touchMoveSpeed = 1;
 	public float mouseLookSpeed = 3.5f;
 	public float mouseMoveSpeed = 2000f;
+	public float clickTime = .2f;
+	private float clickStartTime;
 	private Rigidbody _rigidbody;
 	private Vector2 touchStartPos;
 	private float pinchStartDist;
 	private int lastFinger;
 	private Vector3 startRotation;
+	private Vector3 startPosition;
+	private GameObject targetGO;
+	private float teleportStartTime;
+	public float teleportTime = 2f;
 
 	private void Start()
 	{
@@ -20,7 +26,7 @@ public class Controls : MonoBehaviour {
 
 	void Update()
 	{
-		if (Input.touchSupported)
+		if (Input.touchSupported || Application.platform == RuntimePlatform.WindowsEditor)
 		{
 			// Track a single touch as a direction control.
 			if (Input.touchCount == 1)
@@ -36,6 +42,7 @@ public class Controls : MonoBehaviour {
 						touchStartPos = touch.position;
 						startRotation = transform.localEulerAngles;
 						lastFinger = touch.fingerId;
+						clickStartTime = Time.time;
 						break;
 
 					//Determine if the touch is a moving touch
@@ -59,6 +66,20 @@ public class Controls : MonoBehaviour {
 
 					case TouchPhase.Ended:
 						// Report that the touch has ended when it ends
+						if (touch.fingerId == lastFinger && Time.time - clickStartTime < clickTime)
+						{
+							Ray ray = Camera.main.ScreenPointToRay(touch.position);
+							RaycastHit hit;
+							if (Physics.Raycast(ray, out hit))
+							{
+								if (hit.collider.tag == "photosphere")
+								{
+									targetGO = hit.collider.gameObject;
+									teleportStartTime = Time.time;
+									startPosition = transform.position;
+								}
+							}
+						}
 						break;
 				}
 			}
@@ -98,7 +119,33 @@ public class Controls : MonoBehaviour {
 				}
 				transform.localEulerAngles = lookVector;
 			}
+			if (Input.GetMouseButtonDown(0))
+			{
+				clickStartTime = Time.time;
+			}
+			else if (Input.GetMouseButtonUp(0) && Time.time - clickStartTime < clickTime)
+			{
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit))
+				{
+					if (hit.collider.tag == "photosphere")
+					{
+						targetGO = hit.collider.gameObject;
+						teleportStartTime = Time.time;
+						startPosition = transform.position;
+					}
+				}
+			}
 			_rigidbody.AddForce(transform.forward * Input.GetAxis("Mouse ScrollWheel") * mouseMoveSpeed);
+		}
+		if (targetGO != null)
+		{
+			transform.position = Vector3.Lerp(startPosition, targetGO.transform.position, (Time.time - teleportStartTime) / teleportTime);
+			if (transform.position == targetGO.transform.position)
+			{
+				targetGO = null;
+			}
 		}
 	}
 }
