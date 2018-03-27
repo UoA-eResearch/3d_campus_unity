@@ -22,6 +22,9 @@ ModelImporter:
     4300000: EpsomBuildings_MeshPart0
     4300002: EpsomBuildings_MeshPart1
     4300004: EpsomBuildings_MeshPart2
+    6400000: EpsomBuildings_MeshPart0
+    6400002: EpsomBuildings_MeshPart1
+    6400004: EpsomBuildings_MeshPart2
   materials:
     importMaterials: 1
     materialName: 0
@@ -51,7 +54,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
