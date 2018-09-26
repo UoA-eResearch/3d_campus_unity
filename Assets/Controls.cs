@@ -22,6 +22,8 @@ public class Controls : MonoBehaviour {
 	private void Start()
 	{
 		_rigidbody = GetComponent<Rigidbody>();
+        Debug.Log("Touch supported = " + Input.touchSupported);
+        Debug.Log("Platform: " + Application.platform);
 	}
 
 	void Update()
