@@ -11,7 +11,7 @@ public class LoadAssetBundles : MonoBehaviour
 		var path = Application.streamingAssetsPath;
 		if (Application.platform == RuntimePlatform.LinuxEditor)
 		{
-			path = "file://" + path + "/Linux/";
+			path = "file://" + path + "/Linux64/";
 			Caching.ClearCache();
 		}
 		else if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -20,7 +20,7 @@ public class LoadAssetBundles : MonoBehaviour
 		}
 		Debug.Log(path);
 
-		using (var www = WWW.LoadFromCacheOrDownload(path + model, 1))
+		using (var www = WWW.LoadFromCacheOrDownload(path + model, 3))
 		{
 			yield return www;
 			if (!string.IsNullOrEmpty(www.error))
@@ -47,5 +47,7 @@ public class LoadAssetBundles : MonoBehaviour
 		StartCoroutine(LoadModel("city with skytower packed mat"));
 		StartCoroutine(LoadModel("epsom"));
 		StartCoroutine(LoadModel("tamaki packed mat"));
+		StartCoroutine(LoadModel("wider akl"));
+		StartCoroutine(LoadModel("tai"));
 	}
 }

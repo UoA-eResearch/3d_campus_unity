@@ -1,0 +1,30 @@
+ManifestFileVersion: 0
+CRC: 3972700958
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ce5d6237d1e9c344226495bf935305e7
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9b4f1593cdf7a1ab33da9444111cb398
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+Assets:
+- Assets/wider akl.fbx
+Dependencies: []

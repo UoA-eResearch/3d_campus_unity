@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 1674767887
+CRC: 3283751271
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -13,4 +13,10 @@ AssetBundleManifest:
       Dependencies: {}
     Info_3:
       Name: city with skytower packed mat
+      Dependencies: {}
+    Info_4:
+      Name: wider akl
+      Dependencies: {}
+    Info_5:
+      Name: tai
       Dependencies: {}
