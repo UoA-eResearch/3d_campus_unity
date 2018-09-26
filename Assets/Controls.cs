@@ -28,7 +28,7 @@ public class Controls : MonoBehaviour {
 
 	void Update()
 	{
-		if (Input.touchSupported || Application.platform == RuntimePlatform.WindowsEditor)
+		if (Application.platform == RuntimePlatform.Android)
 		{
 			// Track a single touch as a direction control.
 			if (Input.touchCount == 1)
