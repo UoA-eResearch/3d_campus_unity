@@ -166,7 +166,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 2637716e9560ba540b86ad745b78cc25, type: 3}
       propertyPath: m_Name
-      value: tamaki
+      value: tamaki packed mat
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2300000, guid: 2637716e9560ba540b86ad745b78cc25, type: 3}
@@ -3114,7 +3114,7 @@ GameObject:
   - component: {fileID: 1590392229}
   - component: {fileID: 1590392228}
   m_Layer: 0
-  m_Name: city
+  m_Name: city with skytower packed mat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

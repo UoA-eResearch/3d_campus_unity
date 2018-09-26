@@ -1,7 +1,16 @@
 ManifestFileVersion: 0
-CRC: 2591525371
+CRC: 1674767887
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: leigh
+      Dependencies: {}
+    Info_1:
+      Name: epsom
+      Dependencies: {}
+    Info_2:
+      Name: tamaki packed mat
+      Dependencies: {}
+    Info_3:
+      Name: city with skytower packed mat
       Dependencies: {}

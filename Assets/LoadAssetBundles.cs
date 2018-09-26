@@ -44,8 +44,8 @@ public class LoadAssetBundles : MonoBehaviour
 		while (!Caching.ready)
 			yield return null;
 		StartCoroutine(LoadModel("leigh"));
-		StartCoroutine(LoadModel("city"));
+		StartCoroutine(LoadModel("city with skytower packed mat"));
 		StartCoroutine(LoadModel("epsom"));
-		StartCoroutine(LoadModel("tamaki"));
+		StartCoroutine(LoadModel("tamaki packed mat"));
 	}
 }
