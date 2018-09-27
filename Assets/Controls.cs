@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Controls : MonoBehaviour {
+public class Controls : MonoBehaviour
+{
 	public float touchLookSpeed = .1f;
 	public float touchMoveSpeed = 1;
 	public float mouseLookSpeed = 3.5f;
@@ -18,12 +20,13 @@ public class Controls : MonoBehaviour {
 	private GameObject targetGO;
 	private float teleportStartTime;
 	public float teleportTime = 2f;
+	private bool usingUI = false;
 
 	private void Start()
 	{
 		_rigidbody = GetComponent<Rigidbody>();
-        Debug.Log("Touch supported = " + Input.touchSupported);
-        Debug.Log("Platform: " + Application.platform);
+		Debug.Log("Touch supported = " + Input.touchSupported);
+		Debug.Log("Platform: " + Application.platform);
 	}
 
 	void Update()
@@ -106,7 +109,12 @@ public class Controls : MonoBehaviour {
 		}
 		else
 		{
-			if (Input.GetMouseButton(0))
+			if (Input.GetMouseButtonDown(0))
+			{
+				clickStartTime = Time.time;
+				usingUI = EventSystem.current.IsPointerOverGameObject();
+			}
+			else if (Input.GetMouseButton(0) && !usingUI)
 			{
 				var lookVector = new Vector3(transform.localEulerAngles.x + Input.GetAxis("Mouse Y") * mouseLookSpeed, transform.localEulerAngles.y - Input.GetAxis("Mouse X") * mouseLookSpeed, 0);
 				float x = lookVector.x;
@@ -120,10 +128,6 @@ public class Controls : MonoBehaviour {
 					lookVector.x = -80;
 				}
 				transform.localEulerAngles = lookVector;
-			}
-			if (Input.GetMouseButtonDown(0))
-			{
-				clickStartTime = Time.time;
 			}
 			else if (Input.GetMouseButtonUp(0) && Time.time - clickStartTime < clickTime)
 			{
