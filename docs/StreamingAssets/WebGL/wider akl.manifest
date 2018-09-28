@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3972700958
+CRC: 1812800604
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ce5d6237d1e9c344226495bf935305e7
+    Hash: f2f63d71fca78aaece8b21fe83826593
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9b4f1593cdf7a1ab33da9444111cb398
+    Hash: 3a791432445a5155dce2a92a3ae42df3
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -24,6 +24,8 @@ ClassTypes:
 - Class: 43
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 64
   Script: {instanceID: 0}
 Assets:
 - Assets/wider akl.fbx

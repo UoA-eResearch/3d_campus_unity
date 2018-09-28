@@ -17,8 +17,9 @@ public class Controls : MonoBehaviour
 	private int lastFinger;
 	private Vector3 startRotation;
 	private Vector3 startPosition;
-	private GameObject targetGO;
+	public GameObject targetGO;
 	private float teleportStartTime;
+	Quaternion gotoStartRotation;
 	public float teleportTime = 2f;
 	private bool usingUI = false;
 
@@ -27,6 +28,14 @@ public class Controls : MonoBehaviour
 		_rigidbody = GetComponent<Rigidbody>();
 		Debug.Log("Touch supported = " + Input.touchSupported);
 		Debug.Log("Platform: " + Application.platform);
+	}
+
+	public void GoTo(GameObject go)
+	{
+		targetGO = go;
+		teleportStartTime = Time.time;
+		startPosition = transform.position;
+		gotoStartRotation = transform.rotation;
 	}
 
 	void Update()
@@ -143,12 +152,19 @@ public class Controls : MonoBehaviour
 					}
 				}
 			}
+			else if (Input.GetMouseButton(1))
+			{
+				_rigidbody.AddRelativeForce(Input.GetAxis("Mouse X") * mouseMoveSpeed / 4, 0, Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4);
+			}
 			_rigidbody.AddForce(transform.forward * Input.GetAxis("Mouse ScrollWheel") * mouseMoveSpeed);
 		}
 		if (targetGO != null)
 		{
-			transform.position = Vector3.Lerp(startPosition, targetGO.transform.position, (Time.time - teleportStartTime) / teleportTime);
-			if (transform.position == targetGO.transform.position)
+			var t = (Time.time - teleportStartTime) / teleportTime;
+			transform.position = Vector3.Lerp(startPosition, targetGO.transform.position, t);
+			transform.rotation = Quaternion.Lerp(gotoStartRotation, targetGO.transform.rotation, t);
+			var d = Vector3.Distance(transform.position, targetGO.transform.position);
+			if (d < .01)
 			{
 				targetGO = null;
 			}

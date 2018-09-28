@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3064989125
+CRC: 4008466479
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8f3c47248b28666377e4c2641862e616
+    Hash: 9e6cc76c33eb00eb7b38c6d3b3544b14
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 813466e6bd79712f10f61108eadcec0d
+    Hash: 3a791432445a5155dce2a92a3ae42df3
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -17,11 +17,15 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 23
   Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
 - Class: 33
   Script: {instanceID: 0}
 - Class: 43
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 64
   Script: {instanceID: 0}
 Assets:
 - Assets/tai.fbx

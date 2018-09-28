@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 public class CreateAssetBundles
 {
@@ -12,6 +13,7 @@ public class CreateAssetBundles
 			Directory.CreateDirectory(assetBundleDirectory);
 		}
 		BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, BuildTarget.WebGL);
+		Debug.Log("Assets built");
 	}
 
 	[MenuItem("Assets/Build Linux64 AssetBundles")]
@@ -23,5 +25,6 @@ public class CreateAssetBundles
 			Directory.CreateDirectory(assetBundleDirectory);
 		}
 		BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, BuildTarget.StandaloneLinux64);
+		Debug.Log("Assets built");
 	}
 }
