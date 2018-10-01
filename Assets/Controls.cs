@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -22,6 +23,9 @@ public class Controls : MonoBehaviour
 	Quaternion gotoStartRotation;
 	public float teleportTime = 2f;
 	private bool usingUI = false;
+
+	[DllImport("__Internal")]
+	private static extern void ShowYoutube(string str);
 
 	private void Start()
 	{
@@ -149,6 +153,9 @@ public class Controls : MonoBehaviour
 						targetGO = hit.collider.gameObject;
 						teleportStartTime = Time.time;
 						startPosition = transform.position;
+					}
+					if (hit.collider.tag == "disc") {
+						ShowYoutube(hit.collider.name);
 					}
 				}
 			}
