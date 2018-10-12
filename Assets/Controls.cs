@@ -23,6 +23,7 @@ public class Controls : MonoBehaviour
 	Quaternion gotoStartRotation;
 	public float teleportTime = 2f;
 	private bool usingUI = false;
+	public Transform compass;
 
 	[DllImport("__Internal")]
 	private static extern void ShowYoutube(string str);
@@ -36,7 +37,13 @@ public class Controls : MonoBehaviour
 
 	public void GoTo(GameObject go)
 	{
-		targetGO = go;
+		if (go != null)
+		{
+			targetGO = go;
+		} else
+		{
+			targetGO = gameObject;
+		}
 		teleportStartTime = Time.time;
 		startPosition = transform.position;
 		gotoStartRotation = transform.rotation;
@@ -168,13 +175,27 @@ public class Controls : MonoBehaviour
 		if (targetGO != null)
 		{
 			var t = (Time.time - teleportStartTime) / teleportTime;
-			transform.position = Vector3.Lerp(startPosition, targetGO.transform.position, t);
-			transform.rotation = Quaternion.Lerp(gotoStartRotation, targetGO.transform.rotation, t);
-			var d = Vector3.Distance(transform.position, targetGO.transform.position);
-			if (d < .01)
+			if (targetGO == gameObject)
 			{
-				targetGO = null;
+				var north = Quaternion.Euler(transform.rotation.eulerAngles.x, -180, transform.rotation.eulerAngles.z);
+				transform.rotation = Quaternion.Lerp(gotoStartRotation, north, t);
+				var angle = Quaternion.Angle(transform.rotation, north);
+				if (angle < .01)
+				{
+					targetGO = null;
+				}
+			}
+			else
+			{
+				transform.position = Vector3.Lerp(startPosition, targetGO.transform.position, t);
+				transform.rotation = Quaternion.Lerp(gotoStartRotation, targetGO.transform.rotation, t);
+				var d = Vector3.Distance(transform.position, targetGO.transform.position);
+				if (d < .01)
+				{
+					targetGO = null;
+				}
 			}
 		}
+		compass.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.y - 180);
 	}
 }
