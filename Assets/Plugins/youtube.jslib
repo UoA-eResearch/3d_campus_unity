@@ -2,7 +2,7 @@ mergeInto(LibraryManager.library, {
   ShowYoutube: function (str) {
     var videoId = Pointer_stringify(str);
     var iframe = document.createElement('iframe');
-    iframe.src = "https://www.youtube.com/embed/" + videoId + "?rel=0";
+    iframe.src = "https://www.youtube.com/embed/" + videoId + "?rel=0&autoplay=1";
     iframe.style.position = "absolute";
     iframe.style.top = "10%";
     iframe.style.left = "10%";
