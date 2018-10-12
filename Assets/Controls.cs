@@ -24,6 +24,7 @@ public class Controls : MonoBehaviour
 	public float teleportTime = 2f;
 	private bool usingUI = false;
 	public Transform compass;
+	private Vector3 orbitPoint;
 
 	[DllImport("__Internal")]
 	private static extern void ShowYoutube(string str);
@@ -133,21 +134,38 @@ public class Controls : MonoBehaviour
 			{
 				clickStartTime = Time.time;
 				usingUI = EventSystem.current.IsPointerOverGameObject();
+				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+				{
+					Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+					RaycastHit hit;
+					if (Physics.Raycast(ray, out hit))
+					{
+						orbitPoint = hit.point;
+					}
+				}
 			}
 			else if (Input.GetMouseButton(0) && !usingUI)
 			{
-				var lookVector = new Vector3(transform.localEulerAngles.x + Input.GetAxis("Mouse Y") * mouseLookSpeed, transform.localEulerAngles.y - Input.GetAxis("Mouse X") * mouseLookSpeed, 0);
-				float x = lookVector.x;
-				x = (x > 180) ? x - 360 : x;
-				if (x > 80)
+				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 				{
-					lookVector.x = 80;
+					transform.LookAt(orbitPoint);
+					_rigidbody.AddRelativeForce(Input.GetAxis("Mouse X") * mouseMoveSpeed / 4, 0, Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4);
 				}
-				else if (x < -80)
+				else
 				{
-					lookVector.x = -80;
+					var lookVector = new Vector3(transform.localEulerAngles.x + Input.GetAxis("Mouse Y") * mouseLookSpeed, transform.localEulerAngles.y - Input.GetAxis("Mouse X") * mouseLookSpeed, 0);
+					float x = lookVector.x;
+					x = (x > 180) ? x - 360 : x;
+					if (x > 80)
+					{
+						lookVector.x = 80;
+					}
+					else if (x < -80)
+					{
+						lookVector.x = -80;
+					}
+					transform.localEulerAngles = lookVector;
 				}
-				transform.localEulerAngles = lookVector;
 			}
 			else if (Input.GetMouseButtonUp(0) && Time.time - clickStartTime < clickTime)
 			{
