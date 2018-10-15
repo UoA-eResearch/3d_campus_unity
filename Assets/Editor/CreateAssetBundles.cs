@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class CreateAssetBundles
+public class CreateAssetBundles : MonoBehaviour
 {
 	[MenuItem("Assets/Build WebGL AssetBundles")]
 	static void BuildAllAssetBundles()
@@ -14,6 +14,28 @@ public class CreateAssetBundles
 		}
 		BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, BuildTarget.WebGL);
 		Debug.Log("Assets built");
+	}
+
+	[MenuItem("Assets/Prep scene for streaming")]
+	static void StreamSceneSetup()
+	{
+		foreach (var mesh in GameObject.FindObjectsOfType<MeshFilter>())
+		{
+			DestroyImmediate(mesh);
+		}
+		foreach (var mesh in GameObject.FindObjectsOfType<MeshRenderer>())
+		{
+			DestroyImmediate(mesh);
+		}
+		foreach (var mesh in GameObject.FindObjectsOfType<MeshCollider>())
+		{
+			DestroyImmediate(mesh);
+		}
+		if (Camera.main.gameObject.GetComponent<LoadAssetBundles>() == null)
+		{
+			Camera.main.gameObject.AddComponent<LoadAssetBundles>();
+		}
+		Debug.Log("Scene prepped!");
 	}
 
 	[MenuItem("Assets/Build Linux64 AssetBundles")]
