@@ -10,7 +10,12 @@ ModelImporter:
     3300000: //RootNode
     4300000: merged_dem
     6400000: //RootNode
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rastMat.001
+    second: {fileID: 2100000, guid: de601d247d93d437090e32c6a8029bbc, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -91,5 +96,5 @@ ModelImporter:
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
-  assetBundleName: 
+  assetBundleName: wider_akl2
   assetBundleVariant: 

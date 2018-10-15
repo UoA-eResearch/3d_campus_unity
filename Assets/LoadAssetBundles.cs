@@ -20,7 +20,7 @@ public class LoadAssetBundles : MonoBehaviour
 		}
 		Debug.Log(path);
 
-		using (var www = WWW.LoadFromCacheOrDownload(path + model, 4))
+		using (var www = WWW.LoadFromCacheOrDownload(path + model, 5))
 		{
 			yield return www;
 			if (!string.IsNullOrEmpty(www.error))
@@ -47,7 +47,7 @@ public class LoadAssetBundles : MonoBehaviour
 		StartCoroutine(LoadModel("city with skytower packed mat"));
 		StartCoroutine(LoadModel("epsom"));
 		StartCoroutine(LoadModel("tamaki packed mat"));
-		StartCoroutine(LoadModel("wider akl"));
+		StartCoroutine(LoadModel("wider_akl2"));
 		StartCoroutine(LoadModel("tai"));
 	}
 }
