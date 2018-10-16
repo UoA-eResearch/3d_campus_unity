@@ -6,6 +6,7 @@ TagManager:
   tags:
   - photosphere
   - disc
+  - stream
   layers:
   - Default
   - TransparentFX

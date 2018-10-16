@@ -21,15 +21,13 @@ public class CreateAssetBundles : MonoBehaviour
 	{
 		foreach (var mesh in GameObject.FindObjectsOfType<MeshFilter>())
 		{
-			DestroyImmediate(mesh);
-		}
-		foreach (var mesh in GameObject.FindObjectsOfType<MeshRenderer>())
-		{
-			DestroyImmediate(mesh);
-		}
-		foreach (var mesh in GameObject.FindObjectsOfType<MeshCollider>())
-		{
-			DestroyImmediate(mesh);
+			if (mesh.tag == "stream")
+			{
+				Debug.Log("removing " + mesh.name + mesh.tag);
+				DestroyImmediate(mesh.GetComponent<MeshCollider>());
+				DestroyImmediate(mesh.GetComponent<MeshRenderer>());
+				DestroyImmediate(mesh);
+			}
 		}
 		if (Camera.main.gameObject.GetComponent<LoadAssetBundles>() == null)
 		{
