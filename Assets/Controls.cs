@@ -130,19 +130,19 @@ public class Controls : MonoBehaviour
 		}
 		else
 		{
+			if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.LeftControl))
+			{
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit))
+				{
+					orbitPoint = hit.point;
+				}
+			}
 			if (Input.GetMouseButtonDown(0))
 			{
 				clickStartTime = Time.time;
 				usingUI = EventSystem.current.IsPointerOverGameObject();
-				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
-				{
-					Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-					RaycastHit hit;
-					if (Physics.Raycast(ray, out hit))
-					{
-						orbitPoint = hit.point;
-					}
-				}
 			}
 			else if (Input.GetMouseButton(0) && !usingUI)
 			{
