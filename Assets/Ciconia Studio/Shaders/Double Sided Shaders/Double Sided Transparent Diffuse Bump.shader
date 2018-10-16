@@ -1,15 +1,13 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
+Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump2" {
     Properties {
-        _Diffusecolor ("Diffuse color", Color) = (1,1,1,1)
-        _MainTex ("Diffuse Map (Trans A)", 2D) = "white" {}
-        _Speccolor ("Spec color", Color) = (1,1,1,1)
-        _SpecGlossMap ("Specular Map", 2D) = "white" {}
-        _SpecIntensity ("Spec Intensity", Range(0, 2)) = 0.2
-        _Gloss ("Gloss", Range(0, 1)) = 0.5
-        _BumpMap ("Normal Map", 2D) = "bump" {}
+        _Color ("Diffuse Color", Color) = (1,1,1,1)
+        _MainTex ("Diffuse map (Trans A)", 2D) = "white" {}
+        _BumpMap ("Normal map", 2D) = "bump" {}
         _NormalIntensity ("Normal Intensity", Range(0, 2)) = 1
+        _SpecGlossMap ("Specular map", 2D) = "white" {}
+        _SpecColor ("Specular Color", Color) = (1,1,1,1)
+        _SpecularIntensity ("Specular Intensity", Range(0, 2)) = 0.2
+        _Glossiness ("Glossiness", Range(0, 1)) = 0.5
         _Transparency ("Transparency", Range(0, 1)) = 0.5
         [HideInInspector]_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
     }
@@ -30,7 +28,6 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #define UNITY_PASS_FORWARDBASE
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
             #include "UnityCG.cginc"
@@ -46,13 +43,12 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             #pragma only_renderers d3d9 d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
             #pragma target 3.0
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
-            uniform float4 _Diffusecolor;
+            uniform float4 _Color;
             uniform sampler2D _BumpMap; uniform float4 _BumpMap_ST;
             uniform float _NormalIntensity;
             uniform sampler2D _SpecGlossMap; uniform float4 _SpecGlossMap_ST;
-            uniform float4 _Speccolor;
-            uniform float _SpecIntensity;
-            uniform float _Gloss;
+            uniform float _SpecularIntensity;
+            uniform float _Glossiness;
             uniform float _Transparency;
             struct VertexInput {
                 float4 vertex : POSITION;
@@ -94,7 +90,7 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
-                o.pos = UnityObjectToClipPos(v.vertex );
+                o.pos = UnityObjectToClipPos( v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
@@ -114,13 +110,15 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 float3 lightColor = _LightColor0.rgb;
                 float3 halfDirection = normalize(viewDirection+lightDirection);
 ////// Lighting:
-                float attenuation = LIGHT_ATTENUATION(i);
+                UNITY_LIGHT_ATTENUATION(attenuation,i, i.posWorld.xyz);
                 float3 attenColor = attenuation * _LightColor0.xyz;
                 float Pi = 3.141592654;
                 float InvPi = 0.31830988618;
 ///////// Gloss:
-                float gloss = _Gloss;
-                float specPow = exp2( gloss * 10.0+1.0);
+                float gloss = _Glossiness;
+                float perceptualRoughness = 1.0 - _Glossiness;
+                float roughness = perceptualRoughness * perceptualRoughness;
+                float specPow = exp2( gloss * 10.0 + 1.0 );
 /////// GI Data:
                 UnityLight light;
                 #ifdef LIGHTMAP_OFF
@@ -163,20 +161,48 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 lightColor = gi.light.color;
 ////// Specular:
                 float NdotL = saturate(dot( normalDirection, lightDirection ));
+                float LdotH = saturate(dot(lightDirection, halfDirection));
                 float4 _SpecGlossMap_var = tex2D(_SpecGlossMap,TRANSFORM_TEX(i.uv0, _SpecGlossMap));
-                float3 specularColor = ((_SpecGlossMap_var.rgb*_SpecIntensity)*_Speccolor.rgb);
-                float specularMonochrome = max( max(specularColor.r, specularColor.g), specularColor.b);
-                float normTerm = (specPow + 8.0 ) / (8.0 * Pi);
-                float3 directSpecular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),specPow)*normTerm*specularColor;
-                float3 indirectSpecular = (gi.indirect.specular)*specularColor;
+                float3 specularColor = ((_SpecGlossMap_var.rgb*_SpecularIntensity)*_SpecColor.rgb);
+                float specularMonochrome;
+                float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
+                float3 diffuseColor = (_MainTex_var.rgb*_Color.rgb); // Need this for specular when using metallic
+                diffuseColor = EnergyConservationBetweenDiffuseAndSpecular(diffuseColor, specularColor, specularMonochrome);
+                specularMonochrome = 1.0-specularMonochrome;
+                float NdotV = abs(dot( normalDirection, viewDirection ));
+                float NdotH = saturate(dot( normalDirection, halfDirection ));
+                float VdotH = saturate(dot( viewDirection, halfDirection ));
+                float visTerm = SmithJointGGXVisibilityTerm( NdotL, NdotV, roughness );
+                float normTerm = GGXTerm(NdotH, roughness);
+                float specularPBL = (visTerm*normTerm) * UNITY_PI;
+                #ifdef UNITY_COLORSPACE_GAMMA
+                    specularPBL = sqrt(max(1e-4h, specularPBL));
+                #endif
+                specularPBL = max(0, specularPBL * NdotL);
+                #if defined(_SPECULARHIGHLIGHTS_OFF)
+                    specularPBL = 0.0;
+                #endif
+                half surfaceReduction;
+                #ifdef UNITY_COLORSPACE_GAMMA
+                    surfaceReduction = 1.0-0.28*roughness*perceptualRoughness;
+                #else
+                    surfaceReduction = 1.0/(roughness*roughness + 1.0);
+                #endif
+                specularPBL *= any(specularColor) ? 1.0 : 0.0;
+                float3 directSpecular = attenColor*specularPBL*FresnelTerm(specularColor, LdotH);
+                half grazingTerm = saturate( gloss + specularMonochrome );
+                float3 indirectSpecular = (gi.indirect.specular);
+                indirectSpecular *= FresnelLerp (specularColor, grazingTerm, NdotV);
+                indirectSpecular *= surfaceReduction;
                 float3 specular = (directSpecular + indirectSpecular);
 /////// Diffuse:
                 NdotL = max(0.0,dot( normalDirection, lightDirection ));
-                float3 directDiffuse = max( 0.0, NdotL) * attenColor;
+                half fd90 = 0.5 + 2 * LdotH * LdotH * (1-gloss);
+                float nlPow5 = Pow5(1-NdotL);
+                float nvPow5 = Pow5(1-NdotV);
+                float3 directDiffuse = ((1 +(fd90 - 1)*nlPow5) * (1 + (fd90 - 1)*nvPow5) * NdotL) * attenColor;
                 float3 indirectDiffuse = float3(0,0,0);
                 indirectDiffuse += gi.indirect.diffuse;
-                float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                float3 diffuseColor = (_MainTex_var.rgb*_Diffusecolor.rgb);
                 diffuseColor *= 1-specularMonochrome;
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
 /// Final Color:
@@ -199,7 +225,6 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #define UNITY_PASS_FORWARDADD
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
             #include "UnityCG.cginc"
@@ -215,13 +240,12 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             #pragma only_renderers d3d9 d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
             #pragma target 3.0
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
-            uniform float4 _Diffusecolor;
+            uniform float4 _Color;
             uniform sampler2D _BumpMap; uniform float4 _BumpMap_ST;
             uniform float _NormalIntensity;
             uniform sampler2D _SpecGlossMap; uniform float4 _SpecGlossMap_ST;
-            uniform float4 _Speccolor;
-            uniform float _SpecIntensity;
-            uniform float _Gloss;
+            uniform float _SpecularIntensity;
+            uniform float _Glossiness;
             uniform float _Transparency;
             struct VertexInput {
                 float4 vertex : POSITION;
@@ -253,7 +277,7 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
-                o.pos = UnityObjectToClipPos(v.vertex );
+                o.pos = UnityObjectToClipPos( v.vertex );
                 UNITY_TRANSFER_FOG(o,o.pos);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
@@ -272,26 +296,47 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 float3 lightColor = _LightColor0.rgb;
                 float3 halfDirection = normalize(viewDirection+lightDirection);
 ////// Lighting:
-                float attenuation = LIGHT_ATTENUATION(i);
+                UNITY_LIGHT_ATTENUATION(attenuation,i, i.posWorld.xyz);
                 float3 attenColor = attenuation * _LightColor0.xyz;
                 float Pi = 3.141592654;
                 float InvPi = 0.31830988618;
 ///////// Gloss:
-                float gloss = _Gloss;
-                float specPow = exp2( gloss * 10.0+1.0);
+                float gloss = _Glossiness;
+                float perceptualRoughness = 1.0 - _Glossiness;
+                float roughness = perceptualRoughness * perceptualRoughness;
+                float specPow = exp2( gloss * 10.0 + 1.0 );
 ////// Specular:
                 float NdotL = saturate(dot( normalDirection, lightDirection ));
+                float LdotH = saturate(dot(lightDirection, halfDirection));
                 float4 _SpecGlossMap_var = tex2D(_SpecGlossMap,TRANSFORM_TEX(i.uv0, _SpecGlossMap));
-                float3 specularColor = ((_SpecGlossMap_var.rgb*_SpecIntensity)*_Speccolor.rgb);
-                float specularMonochrome = max( max(specularColor.r, specularColor.g), specularColor.b);
-                float normTerm = (specPow + 8.0 ) / (8.0 * Pi);
-                float3 directSpecular = attenColor * pow(max(0,dot(halfDirection,normalDirection)),specPow)*normTerm*specularColor;
+                float3 specularColor = ((_SpecGlossMap_var.rgb*_SpecularIntensity)*_SpecColor.rgb);
+                float specularMonochrome;
+                float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
+                float3 diffuseColor = (_MainTex_var.rgb*_Color.rgb); // Need this for specular when using metallic
+                diffuseColor = EnergyConservationBetweenDiffuseAndSpecular(diffuseColor, specularColor, specularMonochrome);
+                specularMonochrome = 1.0-specularMonochrome;
+                float NdotV = abs(dot( normalDirection, viewDirection ));
+                float NdotH = saturate(dot( normalDirection, halfDirection ));
+                float VdotH = saturate(dot( viewDirection, halfDirection ));
+                float visTerm = SmithJointGGXVisibilityTerm( NdotL, NdotV, roughness );
+                float normTerm = GGXTerm(NdotH, roughness);
+                float specularPBL = (visTerm*normTerm) * UNITY_PI;
+                #ifdef UNITY_COLORSPACE_GAMMA
+                    specularPBL = sqrt(max(1e-4h, specularPBL));
+                #endif
+                specularPBL = max(0, specularPBL * NdotL);
+                #if defined(_SPECULARHIGHLIGHTS_OFF)
+                    specularPBL = 0.0;
+                #endif
+                specularPBL *= any(specularColor) ? 1.0 : 0.0;
+                float3 directSpecular = attenColor*specularPBL*FresnelTerm(specularColor, LdotH);
                 float3 specular = directSpecular;
 /////// Diffuse:
                 NdotL = max(0.0,dot( normalDirection, lightDirection ));
-                float3 directDiffuse = max( 0.0, NdotL) * attenColor;
-                float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                float3 diffuseColor = (_MainTex_var.rgb*_Diffusecolor.rgb);
+                half fd90 = 0.5 + 2 * LdotH * LdotH * (1-gloss);
+                float nlPow5 = Pow5(1-NdotL);
+                float nvPow5 = Pow5(1-NdotV);
+                float3 directDiffuse = ((1 +(fd90 - 1)*nlPow5) * (1 + (fd90 - 1)*nvPow5) * NdotL) * attenColor;
                 diffuseColor *= 1-specularMonochrome;
                 float3 diffuse = directDiffuse * diffuseColor;
 /// Final Color:
@@ -313,7 +358,6 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #define UNITY_PASS_SHADOWCASTER
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
             #include "UnityCG.cginc"
@@ -344,7 +388,7 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 o.uv1 = v.texcoord1;
                 o.uv2 = v.texcoord2;
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
-                o.pos = UnityObjectToClipPos(v.vertex );
+                o.pos = UnityObjectToClipPos( v.vertex );
                 TRANSFER_SHADOW_CASTER(o)
                 return o;
             }
@@ -366,7 +410,6 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #define UNITY_PASS_META 1
             #define SHOULD_SAMPLE_SH ( defined (LIGHTMAP_OFF) && defined(DYNAMICLIGHTMAP_OFF) )
             #define _GLOSSYENV 1
             #include "UnityCG.cginc"
@@ -383,11 +426,10 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
             #pragma only_renderers d3d9 d3d11 glcore gles gles3 metal d3d11_9x xboxone ps4 psp2 n3ds wiiu 
             #pragma target 3.0
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
-            uniform float4 _Diffusecolor;
+            uniform float4 _Color;
             uniform sampler2D _SpecGlossMap; uniform float4 _SpecGlossMap_ST;
-            uniform float4 _Speccolor;
-            uniform float _SpecIntensity;
-            uniform float _Gloss;
+            uniform float _SpecularIntensity;
+            uniform float _Glossiness;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float2 texcoord0 : TEXCOORD0;
@@ -420,10 +462,12 @@ Shader "Ciconia Studio/Double Sided/Transparent/Diffuse Bump" {
                 o.Emission = 0;
                 
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                float3 diffColor = (_MainTex_var.rgb*_Diffusecolor.rgb);
+                float3 diffColor = (_MainTex_var.rgb*_Color.rgb);
                 float4 _SpecGlossMap_var = tex2D(_SpecGlossMap,TRANSFORM_TEX(i.uv0, _SpecGlossMap));
-                float3 specColor = ((_SpecGlossMap_var.rgb*_SpecIntensity)*_Speccolor.rgb);
-                float roughness = 1.0 - _Gloss;
+                float3 specColor = ((_SpecGlossMap_var.rgb*_SpecularIntensity)*_SpecColor.rgb);
+                float specularMonochrome = max(max(specColor.r, specColor.g),specColor.b);
+                diffColor *= (1.0-specularMonochrome);
+                float roughness = 1.0 - _Glossiness;
                 o.Albedo = diffColor + specColor * roughness * roughness * 0.5;
                 
                 return UnityMetaFragment( o );
