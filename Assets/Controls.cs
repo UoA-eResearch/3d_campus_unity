@@ -25,6 +25,7 @@ public class Controls : MonoBehaviour
 	private bool usingUI = false;
 	public Transform compass;
 	private Vector3 orbitPoint;
+	private float orbitDistance;
 
 	[DllImport("__Internal")]
 	private static extern void ShowYoutube(string str);
@@ -137,6 +138,7 @@ public class Controls : MonoBehaviour
 				if (Physics.Raycast(ray, out hit))
 				{
 					orbitPoint = hit.point;
+					orbitDistance = hit.distance;
 				}
 			}
 			if (Input.GetMouseButtonDown(0))
@@ -149,7 +151,20 @@ public class Controls : MonoBehaviour
 				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 				{
 					transform.LookAt(orbitPoint);
-					_rigidbody.AddRelativeForce(Input.GetAxis("Mouse X") * mouseMoveSpeed / 4, 0, Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4);
+					var distance = Vector3.Distance(transform.position, orbitPoint);
+					var offset = distance - orbitDistance;
+					if (offset < .1)
+					{
+						offset = 0;
+					}
+					var xForce = Input.GetAxis("Mouse X") * mouseMoveSpeed / 4;
+					var yForce = Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4;
+					var xRotation = transform.rotation.eulerAngles.x;
+					if (xRotation > 80 && xRotation <= 90 && yForce > 0)
+					{
+						yForce = 0;
+					}
+					_rigidbody.AddRelativeForce(xForce, yForce, offset * mouseMoveSpeed / 4);
 				}
 				else
 				{
