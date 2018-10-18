@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LoadAssetBundles : MonoBehaviour
 {
+	public Text status;
 
 	IEnumerator LoadModel(string model)
 	{
@@ -26,7 +28,7 @@ public class LoadAssetBundles : MonoBehaviour
 			if (!string.IsNullOrEmpty(www.error))
 			{
 				Debug.LogError(www.error);
-				yield return null;
+				yield break;
 			}
 			AssetBundle ab = www.assetBundle;
 			Debug.Log(String.Join(",", ab.GetAllAssetNames()));
@@ -41,13 +43,24 @@ public class LoadAssetBundles : MonoBehaviour
 
 	IEnumerator Start()
 	{
+		Debug.Log("Waiting for cache");
 		while (!Caching.ready)
 			yield return null;
-		StartCoroutine(LoadModel("leigh"));
-		StartCoroutine(LoadModel("city with skytower packed mat"));
-		StartCoroutine(LoadModel("epsom"));
-		StartCoroutine(LoadModel("tamaki packed mat"));
-		StartCoroutine(LoadModel("wider_akl2"));
-		StartCoroutine(LoadModel("tai"));
+		Debug.Log("Loading");
+		var leigh = StartCoroutine(LoadModel("leigh"));
+		var city = StartCoroutine(LoadModel("city with skytower packed mat"));
+		var epsom = StartCoroutine(LoadModel("epsom"));
+		var tamaki = StartCoroutine(LoadModel("tamaki packed mat"));
+		var wider = StartCoroutine(LoadModel("wider_akl2"));
+		var tai = StartCoroutine(LoadModel("tai"));
+
+		yield return leigh;
+		yield return city;
+		yield return epsom;
+		yield return tamaki;
+		yield return wider;
+		yield return tai;
+		Debug.Log("All models loaded!");
+		status.text = "";
 	}
 }
