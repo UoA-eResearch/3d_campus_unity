@@ -6,8 +6,8 @@ public class FaceCamera : MonoBehaviour {
 
 	public bool scaleWithDistance;
 	private float scaleMin = 0;
-	private float scaleFactor = .1f;
-	private float scaleMax = 2;
+	private float scaleFactor = .04f;
+	private float scaleMax = 1;
 	
 	// Update is called once per frame
 	void Update () {
