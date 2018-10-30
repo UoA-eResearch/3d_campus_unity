@@ -5803,15 +5803,6 @@ Prefab:
       propertyPath: m_Name
       value: Photon factory marker
       objectReference: {fileID: 0}
-    - target: {fileID: 23002297268256314, guid: e9056fb0680c04262a512e82ffc58157,
-        type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6e58ab5f657834d5fa23906f8422a4d9, type: 2}
-    - target: {fileID: 1653547793210842, guid: e9056fb0680c04262a512e82ffc58157, type: 2}
-      propertyPath: m_Name
-      value: R38myhoIoL8
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9056fb0680c04262a512e82ffc58157, type: 2}
   m_IsPrefabAsset: 0
