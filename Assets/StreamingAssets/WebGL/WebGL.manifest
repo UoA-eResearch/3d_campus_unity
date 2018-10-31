@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 4293207080
+CRC: 2374702641
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -16,4 +16,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_4:
       Name: wider_akl2
+      Dependencies: {}
+    Info_5:
+      Name: epsom
       Dependencies: {}

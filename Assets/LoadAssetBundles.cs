@@ -22,7 +22,7 @@ public class LoadAssetBundles : MonoBehaviour
 		}
 		Debug.Log(path);
 
-		using (var www = WWW.LoadFromCacheOrDownload(path + model, 6))
+		using (var www = WWW.LoadFromCacheOrDownload(path + model, 7))
 		{
 			yield return www;
 			if (!string.IsNullOrEmpty(www.error))
