@@ -201,7 +201,7 @@ public class Controls : MonoBehaviour
 			}
 			else if (Input.GetMouseButton(1))
 			{
-				_rigidbody.AddRelativeForce(Input.GetAxis("Mouse X") * mouseMoveSpeed / 4, 0, Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4);
+				_rigidbody.AddRelativeForce(Input.GetAxis("Mouse X") * mouseMoveSpeed / 4, Input.GetAxis("Mouse Y") * mouseMoveSpeed / 4, 0);
 			}
 			_rigidbody.AddForce(transform.forward * Input.GetAxis("Mouse ScrollWheel") * mouseMoveSpeed);
 		}

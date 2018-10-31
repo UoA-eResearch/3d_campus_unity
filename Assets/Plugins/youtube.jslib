@@ -10,6 +10,7 @@ mergeInto(LibraryManager.library, {
     iframe.style.height = "80%";
     iframe.setAttribute("frameborder", 0);
     iframe.setAttribute("allowFullScreen", 1);
+    iframe.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
     document.body.appendChild(iframe);
     document.body.onclick = function() { document.body.removeChild(iframe) }
   },
